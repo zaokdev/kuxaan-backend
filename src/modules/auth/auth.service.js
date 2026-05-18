@@ -21,6 +21,7 @@ async function iniciarSesion(email, contrasena) {
     idUsuario: usuarioEncontrado.idUsuario,
     email: usuarioEncontrado.email,
     rol: usuarioEncontrado.rol,
+    idAlumno: usuarioEncontrado.alumno?.idAlumno || null,
   });
 
   return {
