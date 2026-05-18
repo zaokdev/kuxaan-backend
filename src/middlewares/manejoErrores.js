@@ -21,6 +21,15 @@ function manejarErrores(error, peticion, respuesta, siguiente) {
     return enviarError(respuesta, "Registro no encontrado", 404);
   }
 
+  // Errores de carga de archivos (multer), ej. tamano excedido.
+  if (error.name === "MulterError") {
+    const mensajeArchivo =
+      error.code === "LIMIT_FILE_SIZE"
+        ? "El archivo supera el tamano maximo permitido (10 MB)"
+        : "Error al cargar el archivo";
+    return enviarError(respuesta, mensajeArchivo, 400);
+  }
+
   console.error("Error no controlado:", error);
   return enviarError(respuesta, "Error interno del servidor", 500);
 }
