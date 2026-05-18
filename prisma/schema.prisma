@@ -1,0 +1,113 @@
+// Esquema de la base de datos del sistema KUXAAN.
+// Refleja la estructura relacional definida en la fase de planeacion:
+// usuarios, alumnos, proyectos, asignaciones, registro_horas y evidencias.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Roles disponibles dentro del sistema.
+enum RolUsuario {
+  ADMINISTRADOR
+  ESTUDIANTE
+}
+
+// Tabla usuarios: nucleo de acceso y autenticacion del sistema.
+model Usuario {
+  idUsuario     Int        @id @default(autoincrement()) @map("id_usuario")
+  email         String     @unique @db.VarChar(150)
+  password      String     @db.VarChar(255)
+  rol           RolUsuario @default(ESTUDIANTE)
+  fechaRegistro DateTime   @default(now()) @map("fecha_registro")
+
+  alumno Alumno?
+
+  @@map("usuarios")
+}
+
+// Tabla alumnos: informacion academica y personal del estudiante.
+model Alumno {
+  idAlumno         Int     @id @default(autoincrement()) @map("id_alumno")
+  idUsuario        Int     @unique @map("id_usuario")
+  nombreCompleto   String  @map("nombre_completo") @db.VarChar(150)
+  carrera          String? @db.VarChar(120)
+  universidad      String? @db.VarChar(120)
+  periodoAcademico String? @map("periodo_academico") @db.VarChar(60)
+  telefono         String? @db.VarChar(20)
+  estado           String  @default("ACTIVO") @db.VarChar(30)
+
+  usuario      Usuario        @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade)
+  asignaciones Asignacion[]
+  registros    RegistroHoras[]
+  evidencias   Evidencia[]
+
+  @@map("alumnos")
+}
+
+// Tabla proyectos: repositorio central de iniciativas comunitarias.
+model Proyecto {
+  idProyecto          Int       @id @default(autoincrement()) @map("id_proyecto")
+  nombreProyecto      String    @map("nombre_proyecto") @db.VarChar(150)
+  objetivo            String?   @db.Text
+  comunidadBeneficiada String?  @map("comunidad_beneficiada") @db.VarChar(150)
+  responsable         String?   @db.VarChar(150)
+  fechaInicio         DateTime? @map("fecha_inicio")
+  fechaTermino        DateTime? @map("fecha_termino")
+  estado              String    @default("ACTIVO") @db.VarChar(30)
+
+  asignaciones Asignacion[]
+  registros    RegistroHoras[]
+  evidencias   Evidencia[]
+
+  @@map("proyectos")
+}
+
+// Tabla asignaciones: vincula a un estudiante con un proyecto.
+model Asignacion {
+  idAsignacion    Int      @id @default(autoincrement()) @map("id_asignacion")
+  idAlumno        Int      @map("id_alumno")
+  idProyecto      Int      @map("id_proyecto")
+  fechaAsignacion DateTime @default(now()) @map("fecha_asignacion")
+
+  alumno   Alumno   @relation(fields: [idAlumno], references: [idAlumno], onDelete: Cascade)
+  proyecto Proyecto @relation(fields: [idProyecto], references: [idProyecto], onDelete: Cascade)
+
+  @@unique([idAlumno, idProyecto])
+  @@map("asignaciones")
+}
+
+// Tabla registro_horas: cada entrada de tiempo de servicio social.
+model RegistroHoras {
+  idRegistro    Int      @id @default(autoincrement()) @map("id_registro")
+  idAlumno      Int      @map("id_alumno")
+  idProyecto    Int      @map("id_proyecto")
+  cantidadHoras Float    @map("cantidad_horas")
+  fechaRegistro DateTime @default(now()) @map("fecha_registro")
+  descripcion   String?  @db.Text
+
+  alumno   Alumno   @relation(fields: [idAlumno], references: [idAlumno], onDelete: Cascade)
+  proyecto Proyecto @relation(fields: [idProyecto], references: [idProyecto], onDelete: Cascade)
+
+  @@map("registro_horas")
+}
+
+// Tabla evidencias: archivos digitales que respaldan las actividades.
+model Evidencia {
+  idEvidencia  Int      @id @default(autoincrement()) @map("id_evidencia")
+  idAlumno     Int      @map("id_alumno")
+  idProyecto   Int      @map("id_proyecto")
+  nombreArchivo String  @map("nombre_archivo") @db.VarChar(255)
+  tipoArchivo  String   @map("tipo_archivo") @db.VarChar(60)
+  urlArchivo   String   @map("url_archivo") @db.VarChar(255)
+  fechaSubida  DateTime @default(now()) @map("fecha_subida")
+
+  alumno   Alumno   @relation(fields: [idAlumno], references: [idAlumno], onDelete: Cascade)
+  proyecto Proyecto @relation(fields: [idProyecto], references: [idProyecto], onDelete: Cascade)
+
+  @@map("evidencias")
+}
