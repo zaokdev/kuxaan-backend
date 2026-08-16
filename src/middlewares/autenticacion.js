@@ -1,4 +1,4 @@
-// Verifica el token JWT enviado en el encabezado Authorization.
+﻿// Verifica el token JWT enviado en el encabezado Authorization.
 // Si es valido, adjunta los datos del usuario a la peticion.
 const { verificarToken } = require("../utils/jwt");
 const ErrorAplicacion = require("../utils/errores");

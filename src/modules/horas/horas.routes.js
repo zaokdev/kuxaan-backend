@@ -1,29 +1,35 @@
-// Rutas del registro de horas.
+﻿// Rutas del registro de horas.
 // Consulta y registro: admin y estudiante. Edicion: solo administrador.
 const express = require("express");
-const horasControlador = require("./horas.controller");
+const horasController = require("./horas.controller");
 const envolverAsync = require("../../utils/asyncHandler");
 const autenticarUsuario = require("../../middlewares/autenticacion");
 const autorizarRoles = require("../../middlewares/autorizacion");
 const validarCamposRequeridos = require("../../middlewares/validacion");
 const ROLES = require("../../utils/roles");
 
-const rutasHoras = express.Router();
+const horasRouter = express.Router();
 
-rutasHoras.use(autenticarUsuario);
+horasRouter.use(autenticarUsuario);
 
-rutasHoras.get("/", envolverAsync(horasControlador.listarRegistros));
+horasRouter.get("/", envolverAsync(horasController.listarRegistros));
 
-rutasHoras.post(
+horasRouter.post(
   "/",
   validarCamposRequeridos(["idProyecto", "cantidadHoras"]),
-  envolverAsync(horasControlador.crearRegistro)
+  envolverAsync(horasController.crearRegistro)
 );
 
-rutasHoras.put(
+horasRouter.put(
   "/:id",
   autorizarRoles(ROLES.ADMINISTRADOR),
-  envolverAsync(horasControlador.actualizarRegistro)
+  envolverAsync(horasController.actualizarRegistro)
 );
 
-module.exports = rutasHoras;
+horasRouter.delete(
+  "/:id",
+  autorizarRoles(ROLES.ADMINISTRADOR),
+  envolverAsync(horasController.eliminarRegistro)
+);
+
+module.exports = horasRouter;

@@ -1,4 +1,4 @@
-// Acceso a datos de las evidencias cargadas por los estudiantes.
+﻿// Acceso a datos de las evidencias cargadas por los estudiantes.
 const clientePrisma = require("../../config/prisma");
 
 const inclusionRelaciones = {
@@ -28,4 +28,8 @@ function crearEvidencia(datosEvidencia) {
   });
 }
 
-module.exports = { listarEvidencias, buscarEvidenciaPorId, crearEvidencia };
+function eliminarEvidencia(idEvidencia) {
+  return clientePrisma.evidencia.delete({ where: { idEvidencia } });
+}
+
+module.exports = { listarEvidencias, buscarEvidenciaPorId, crearEvidencia, eliminarEvidencia };

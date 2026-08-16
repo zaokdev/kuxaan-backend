@@ -1,8 +1,8 @@
-// Envuelve controladores asincronos para que cualquier error
+﻿// Envuelve Controlleres asincronos para que cualquier error
 // se reenvie automaticamente al middleware de manejo de errores.
-function envolverAsync(funcionControlador) {
+function envolverAsync(funcionController) {
   return (peticion, respuesta, siguiente) => {
-    Promise.resolve(funcionControlador(peticion, respuesta, siguiente)).catch(siguiente);
+    Promise.resolve(funcionController(peticion, respuesta, siguiente)).catch(siguiente);
   };
 }
 

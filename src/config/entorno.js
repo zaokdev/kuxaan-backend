@@ -1,4 +1,4 @@
-// Carga y centraliza las variables de entorno del sistema.
+﻿// Carga y centraliza las variables de entorno del sistema.
 // Cualquier parte del backend lee la configuracion desde aqui.
 require("dotenv").config();
 

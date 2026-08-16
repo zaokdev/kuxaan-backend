@@ -1,4 +1,4 @@
-// Instancia unica del cliente Prisma reutilizada en todo el backend.
+﻿// Instancia unica del cliente Prisma reutilizada en todo el backend.
 // Evita abrir multiples conexiones a la base de datos.
 const { PrismaClient } = require("@prisma/client");
 

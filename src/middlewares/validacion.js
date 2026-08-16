@@ -1,4 +1,4 @@
-// Valida que el cuerpo de la peticion contenga los campos requeridos.
+﻿// Valida que el cuerpo de la peticion contenga los campos requeridos.
 // Mantiene la validacion simple sin librerias externas.
 const ErrorAplicacion = require("../utils/errores");
 

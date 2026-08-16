@@ -1,4 +1,4 @@
-// Formato uniforme de respuestas JSON para toda la API.
+﻿// Formato uniforme de respuestas JSON para toda la API.
 function enviarExito(respuesta, datos, codigoEstado = 200, mensaje = "Operacion exitosa") {
   return respuesta.status(codigoEstado).json({
     exito: true,

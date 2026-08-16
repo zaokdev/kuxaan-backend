@@ -1,4 +1,4 @@
-// Generacion y verificacion de tokens JWT para la autenticacion.
+﻿// Generacion y verificacion de tokens JWT para la autenticacion.
 const jsonwebtoken = require("jsonwebtoken");
 const configuracion = require("../config/entorno");
 

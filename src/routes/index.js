@@ -1,22 +1,24 @@
-// Enrutador principal: agrupa todos los modulos bajo el prefijo /api.
+﻿// Enrutador principal: agrupa todos los modulos bajo el prefijo /api.
 const express = require("express");
 
-const rutasAutenticacion = require("../modules/auth/auth.routes");
-const rutasEstudiantes = require("../modules/estudiantes/estudiantes.routes");
-const rutasProyectos = require("../modules/proyectos/proyectos.routes");
-const rutasAsignaciones = require("../modules/asignaciones/asignaciones.routes");
-const rutasHoras = require("../modules/horas/horas.routes");
-const rutasEvidencias = require("../modules/evidencias/evidencias.routes");
-const rutasReportes = require("../modules/reportes/reportes.routes");
+const authRouter = require("../modules/auth/auth.routes");
+const estudiantesRouter = require("../modules/estudiantes/estudiantes.routes");
+const proyectosRouter = require("../modules/proyectos/proyectos.routes");
+const asignacionesRouter = require("../modules/asignaciones/asignaciones.routes");
+const horasRouter = require("../modules/horas/horas.routes");
+const evidenciasRouter = require("../modules/evidencias/evidencias.routes");
+const reportesRouter = require("../modules/reportes/reportes.routes");
+const dashboardRouter = require("../modules/dashboard/dashboard.routes");
 
-const enrutadorPrincipal = express.Router();
+const mainRouter = express.Router();
 
-enrutadorPrincipal.use("/auth", rutasAutenticacion);
-enrutadorPrincipal.use("/students", rutasEstudiantes);
-enrutadorPrincipal.use("/projects", rutasProyectos);
-enrutadorPrincipal.use("/assignments", rutasAsignaciones);
-enrutadorPrincipal.use("/hours", rutasHoras);
-enrutadorPrincipal.use("/evidence", rutasEvidencias);
-enrutadorPrincipal.use("/reports", rutasReportes);
+mainRouter.use("/auth", authRouter);
+mainRouter.use("/students", estudiantesRouter);
+mainRouter.use("/projects", proyectosRouter);
+mainRouter.use("/assignments", asignacionesRouter);
+mainRouter.use("/hours", horasRouter);
+mainRouter.use("/evidence", evidenciasRouter);
+mainRouter.use("/reports", reportesRouter);
+mainRouter.use("/dashboard", dashboardRouter);
 
-module.exports = enrutadorPrincipal;
+module.exports = mainRouter;

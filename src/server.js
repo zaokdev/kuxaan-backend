@@ -1,4 +1,4 @@
-// Punto de entrada del backend: levanta el servidor HTTP.
+﻿// Punto de entrada del backend: levanta el servidor HTTP.
 const aplicacion = require("./app");
 const configuracion = require("./config/entorno");
 

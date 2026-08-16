@@ -1,4 +1,4 @@
-// Acceso a datos para los reportes administrativos.
+﻿// Acceso a datos para los reportes administrativos.
 const clientePrisma = require("../../config/prisma");
 
 // Estudiantes con sus registros de horas y proyectos asignados.

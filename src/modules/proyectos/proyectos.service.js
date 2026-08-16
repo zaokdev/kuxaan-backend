@@ -1,20 +1,26 @@
-// Logica de negocio del catalogo de proyectos comunitarios.
-const proyectosRepositorio = require("./proyectos.repository");
+﻿// Logica de negocio del catalogo de proyectos comunitarios.
+const proyectosRepository = require("./proyectos.repository");
 const convertirAFecha = require("../../utils/fechas");
 const ErrorAplicacion = require("../../utils/errores");
 
 async function obtenerProyectos() {
-  return proyectosRepositorio.listarProyectos();
+  return proyectosRepository.listarProyectos();
 }
 
 async function obtenerProyectoPorId(idProyecto) {
-  const proyectoEncontrado = await proyectosRepositorio.buscarProyectoPorId(idProyecto);
+  const proyectoEncontrado = await proyectosRepository.buscarProyectoPorId(idProyecto);
 
   if (!proyectoEncontrado) {
     throw new ErrorAplicacion("Proyecto no encontrado", 404);
   }
 
   return proyectoEncontrado;
+}
+
+// Estudiantes asignados a un proyecto (valida que el proyecto exista).
+async function obtenerEstudiantesDeProyecto(idProyecto) {
+  await obtenerProyectoPorId(idProyecto);
+  return proyectosRepository.listarEstudiantesDeProyecto(idProyecto);
 }
 
 async function registrarProyecto(datosEntrada) {
@@ -28,7 +34,7 @@ async function registrarProyecto(datosEntrada) {
     estado: datosEntrada.estado || "ACTIVO",
   };
 
-  return proyectosRepositorio.crearProyecto(datosProyecto);
+  return proyectosRepository.crearProyecto(datosProyecto);
 }
 
 async function actualizarProyecto(idProyecto, datosEntrada) {
@@ -55,12 +61,32 @@ async function actualizarProyecto(idProyecto, datosEntrada) {
     }
   });
 
-  return proyectosRepositorio.actualizarProyecto(idProyecto, datosProyecto);
+  return proyectosRepository.actualizarProyecto(idProyecto, datosProyecto);
+}
+
+// Elimina un proyecto sin historial. Las asignaciones se borran en cascada,
+// pero un proyecto con horas o evidencias arrastraria el trabajo registrado
+// por los estudiantes, asi que en ese caso se rechaza.
+async function eliminarProyecto(idProyecto) {
+  await obtenerProyectoPorId(idProyecto);
+
+  const relaciones = await proyectosRepository.contarRelacionesDeProyecto(idProyecto);
+
+  if (relaciones._count.registros > 0 || relaciones._count.evidencias > 0) {
+    throw new ErrorAplicacion(
+      "No se puede eliminar un proyecto con horas o evidencias registradas. Cambia su estado a INACTIVO.",
+      409
+    );
+  }
+
+  return proyectosRepository.eliminarProyecto(idProyecto);
 }
 
 module.exports = {
   obtenerProyectos,
   obtenerProyectoPorId,
+  obtenerEstudiantesDeProyecto,
   registrarProyecto,
   actualizarProyecto,
+  eliminarProyecto,
 };

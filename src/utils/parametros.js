@@ -1,4 +1,4 @@
-// Convierte un parametro de ruta a numero entero y valida que sea correcto.
+﻿// Convierte un parametro de ruta a numero entero y valida que sea correcto.
 // Se reutiliza en todos los modulos que reciben un :id en la URL.
 const ErrorAplicacion = require("./errores");
 

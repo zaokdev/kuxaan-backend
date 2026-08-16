@@ -1,4 +1,4 @@
-// Configuracion de multer para la carga local de archivos de evidencia.
+﻿// Configuracion de multer para la carga local de archivos de evidencia.
 // Acepta solo PDF, JPG y PNG con un tamano maximo de 10 MB.
 const multer = require("multer");
 const path = require("path");

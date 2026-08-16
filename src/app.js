@@ -1,8 +1,8 @@
-// Configuracion de la aplicacion Express.
+﻿// Configuracion de la aplicacion Express.
 const express = require("express");
 const cors = require("cors");
 
-const enrutadorPrincipal = require("./routes");
+const mainRouter = require("./routes");
 const { rutaNoEncontrada, manejarErrores } = require("./middlewares/manejoErrores");
 
 const aplicacion = express();
@@ -16,7 +16,7 @@ aplicacion.get("/", (peticion, respuesta) => {
   respuesta.json({ mensaje: "API KUXAAN en funcionamiento" });
 });
 
-aplicacion.use("/api", enrutadorPrincipal);
+aplicacion.use("/api", mainRouter);
 
 // Middlewares finales: ruta no encontrada y manejo de errores.
 aplicacion.use(rutaNoEncontrada);

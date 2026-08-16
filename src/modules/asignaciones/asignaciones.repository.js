@@ -1,4 +1,4 @@
-// Acceso a datos de las asignaciones estudiante-proyecto.
+﻿// Acceso a datos de las asignaciones estudiante-proyecto.
 const clientePrisma = require("../../config/prisma");
 
 function listarAsignaciones() {
@@ -8,6 +8,13 @@ function listarAsignaciones() {
       proyecto: { select: { idProyecto: true, nombreProyecto: true } },
     },
     orderBy: { idAsignacion: "asc" },
+  });
+}
+
+// Usa la clave compuesta declarada en el esquema (@@unique).
+function buscarAsignacion(idAlumno, idProyecto) {
+  return clientePrisma.asignacion.findUnique({
+    where: { idAlumno_idProyecto: { idAlumno, idProyecto } },
   });
 }
 
@@ -25,4 +32,9 @@ function eliminarAsignacion(idAsignacion) {
   return clientePrisma.asignacion.delete({ where: { idAsignacion } });
 }
 
-module.exports = { listarAsignaciones, crearAsignacion, eliminarAsignacion };
+module.exports = {
+  listarAsignaciones,
+  buscarAsignacion,
+  crearAsignacion,
+  eliminarAsignacion,
+};

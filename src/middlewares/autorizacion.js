@@ -1,4 +1,4 @@
-// Restringe el acceso a una ruta segun el rol del usuario autenticado.
+﻿// Restringe el acceso a una ruta segun el rol del usuario autenticado.
 // Se usa despues del middleware de autenticacion.
 const ErrorAplicacion = require("../utils/errores");
 

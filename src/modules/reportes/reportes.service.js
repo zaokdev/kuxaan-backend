@@ -1,16 +1,14 @@
-// Logica de negocio de los reportes: transforma los datos crudos
+﻿// Logica de negocio de los reportes: transforma los datos crudos
 // en la estructura final de cada reporte administrativo.
-const reportesRepositorio = require("./reportes.repository");
+const reportesRepository = require("./reportes.repository");
+const sumarHoras = require("../../utils/horas");
 
 // Reporte de horas acumuladas por estudiante.
 async function generarReporteEstudiantes() {
-  const estudiantes = await reportesRepositorio.obtenerDatosEstudiantes();
+  const estudiantes = await reportesRepository.obtenerDatosEstudiantes();
 
   return estudiantes.map((estudiante) => {
-    const totalHorasAcumuladas = estudiante.registros.reduce(
-      (acumulado, registro) => acumulado + registro.cantidadHoras,
-      0
-    );
+    const totalHorasAcumuladas = sumarHoras(estudiante.registros);
     const proyectosAsignados = estudiante.asignaciones.map(
       (asignacion) => asignacion.proyecto.nombreProyecto
     );
@@ -28,7 +26,7 @@ async function generarReporteEstudiantes() {
 
 // Reporte de participacion de estudiantes en cada proyecto.
 async function generarReporteProyectos() {
-  const proyectos = await reportesRepositorio.obtenerDatosProyectos();
+  const proyectos = await reportesRepository.obtenerDatosProyectos();
 
   return proyectos.map((proyecto) => {
     const estudiantesAsignados = proyecto.asignaciones.map((asignacion) => ({
@@ -49,7 +47,7 @@ async function generarReporteProyectos() {
 
 // Reporte de registro de horas detallado por proyecto.
 async function generarReporteHoras() {
-  const registros = await reportesRepositorio.obtenerRegistrosHoras();
+  const registros = await reportesRepository.obtenerRegistrosHoras();
 
   return registros.map((registro) => ({
     nombreProyecto: registro.proyecto.nombreProyecto,
@@ -62,7 +60,7 @@ async function generarReporteHoras() {
 
 // Reporte de evidencias cargadas.
 async function generarReporteEvidencias() {
-  const evidencias = await reportesRepositorio.obtenerEvidencias();
+  const evidencias = await reportesRepository.obtenerEvidencias();
 
   return evidencias.map((evidencia) => ({
     nombreEstudiante: evidencia.alumno.nombreCompleto,
@@ -76,7 +74,7 @@ async function generarReporteEvidencias() {
 
 // Reporte administrativo general con indicadores globales.
 async function generarReporteGeneral() {
-  return reportesRepositorio.obtenerIndicadoresGenerales();
+  return reportesRepository.obtenerIndicadoresGenerales();
 }
 
 module.exports = {

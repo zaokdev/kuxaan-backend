@@ -1,4 +1,4 @@
-// Encriptado y comparacion de contrasenas con bcrypt.
+﻿// Encriptado y comparacion de contrasenas con bcrypt.
 const bcrypt = require("bcryptjs");
 
 const RONDAS_SAL = 10;

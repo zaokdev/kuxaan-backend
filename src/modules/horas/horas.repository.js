@@ -1,4 +1,4 @@
-// Acceso a datos del registro de horas de servicio social.
+﻿// Acceso a datos del registro de horas de servicio social.
 const clientePrisma = require("../../config/prisma");
 
 const inclusionRelaciones = {
@@ -34,9 +34,14 @@ function actualizarRegistro(idRegistro, datosRegistro) {
   });
 }
 
+function eliminarRegistro(idRegistro) {
+  return clientePrisma.registroHoras.delete({ where: { idRegistro } });
+}
+
 module.exports = {
   listarRegistros,
   buscarRegistroPorId,
   crearRegistro,
   actualizarRegistro,
+  eliminarRegistro,
 };

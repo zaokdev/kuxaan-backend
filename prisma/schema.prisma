@@ -40,6 +40,7 @@ model Alumno {
   periodoAcademico String? @map("periodo_academico") @db.VarChar(60)
   telefono         String? @db.VarChar(20)
   estado           String  @default("ACTIVO") @db.VarChar(30)
+  horasRequeridas  Int     @default(240) @map("horas_requeridas")
 
   usuario      Usuario        @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade)
   asignaciones Asignacion[]

@@ -1,32 +1,43 @@
-// Rutas del modulo de proyectos.
+﻿// Rutas del modulo de proyectos.
 // Consulta: cualquier usuario autenticado. Gestion: solo administrador.
 const express = require("express");
-const proyectosControlador = require("./proyectos.controller");
+const proyectosController = require("./proyectos.controller");
 const envolverAsync = require("../../utils/asyncHandler");
 const autenticarUsuario = require("../../middlewares/autenticacion");
 const autorizarRoles = require("../../middlewares/autorizacion");
 const validarCamposRequeridos = require("../../middlewares/validacion");
 const ROLES = require("../../utils/roles");
 
-const rutasProyectos = express.Router();
+const proyectosRouter = express.Router();
 
-rutasProyectos.use(autenticarUsuario);
+proyectosRouter.use(autenticarUsuario);
 
-rutasProyectos.get("/", envolverAsync(proyectosControlador.listarProyectos));
+proyectosRouter.get("/", envolverAsync(proyectosController.listarProyectos));
 
-rutasProyectos.get("/:id", envolverAsync(proyectosControlador.obtenerProyecto));
+proyectosRouter.get("/:id", envolverAsync(proyectosController.obtenerProyecto));
 
-rutasProyectos.post(
+proyectosRouter.get(
+  "/:id/students",
+  envolverAsync(proyectosController.estudiantesDeProyecto)
+);
+
+proyectosRouter.post(
   "/",
   autorizarRoles(ROLES.ADMINISTRADOR),
   validarCamposRequeridos(["nombreProyecto"]),
-  envolverAsync(proyectosControlador.crearProyecto)
+  envolverAsync(proyectosController.crearProyecto)
 );
 
-rutasProyectos.put(
+proyectosRouter.put(
   "/:id",
   autorizarRoles(ROLES.ADMINISTRADOR),
-  envolverAsync(proyectosControlador.actualizarProyecto)
+  envolverAsync(proyectosController.actualizarProyecto)
 );
 
-module.exports = rutasProyectos;
+proyectosRouter.delete(
+  "/:id",
+  autorizarRoles(ROLES.ADMINISTRADOR),
+  envolverAsync(proyectosController.eliminarProyecto)
+);
+
+module.exports = proyectosRouter;

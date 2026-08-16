@@ -1,4 +1,4 @@
-// Convierte una cadena a objeto Date validando el formato.
+﻿// Convierte una cadena a objeto Date validando el formato.
 // Devuelve null si el valor no se proporciona.
 const ErrorAplicacion = require("./errores");
 

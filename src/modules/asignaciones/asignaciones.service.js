@@ -1,22 +1,46 @@
-// Logica de negocio de las asignaciones.
+﻿// Logica de negocio de las asignaciones.
 // Antes de asignar valida que el alumno y el proyecto existan.
-const asignacionesRepositorio = require("./asignaciones.repository");
-const estudiantesServicio = require("../estudiantes/estudiantes.service");
-const proyectosServicio = require("../proyectos/proyectos.service");
+const asignacionesRepository = require("./asignaciones.repository");
+const estudiantesService = require("../estudiantes/estudiantes.service");
+const proyectosService = require("../proyectos/proyectos.service");
+const ErrorAplicacion = require("../../utils/errores");
 
 async function obtenerAsignaciones() {
-  return asignacionesRepositorio.listarAsignaciones();
+  return asignacionesRepository.listarAsignaciones();
 }
 
 async function registrarAsignacion(idAlumno, idProyecto) {
-  await estudiantesServicio.obtenerEstudiantePorId(idAlumno);
-  await proyectosServicio.obtenerProyectoPorId(idProyecto);
+  await estudiantesService.obtenerEstudiantePorId(idAlumno);
+  await proyectosService.obtenerProyectoPorId(idProyecto);
 
-  return asignacionesRepositorio.crearAsignacion(idAlumno, idProyecto);
+  return asignacionesRepository.crearAsignacion(idAlumno, idProyecto);
+}
+
+// Verifica que el alumno pertenezca al proyecto. La usan horas y evidencias
+// para impedir registros en proyectos donde el estudiante no participa.
+async function asegurarAsignacion(idAlumno, idProyecto) {
+  const asignacionEncontrada = await asignacionesRepository.buscarAsignacion(
+    idAlumno,
+    idProyecto
+  );
+
+  if (!asignacionEncontrada) {
+    throw new ErrorAplicacion(
+      "El estudiante no esta asignado a este proyecto",
+      409
+    );
+  }
+
+  return asignacionEncontrada;
 }
 
 async function eliminarAsignacion(idAsignacion) {
-  return asignacionesRepositorio.eliminarAsignacion(idAsignacion);
+  return asignacionesRepository.eliminarAsignacion(idAsignacion);
 }
 
-module.exports = { obtenerAsignaciones, registrarAsignacion, eliminarAsignacion };
+module.exports = {
+  obtenerAsignaciones,
+  registrarAsignacion,
+  asegurarAsignacion,
+  eliminarAsignacion,
+};

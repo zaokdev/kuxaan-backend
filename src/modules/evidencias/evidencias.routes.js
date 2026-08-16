@@ -1,25 +1,37 @@
-// Rutas del modulo de evidencias.
+﻿// Rutas del modulo de evidencias.
 // Consulta y carga: admin y estudiante autenticados.
 const express = require("express");
-const evidenciasControlador = require("./evidencias.controller");
+const evidenciasController = require("./evidencias.controller");
 const envolverAsync = require("../../utils/asyncHandler");
 const autenticarUsuario = require("../../middlewares/autenticacion");
+const autorizarRoles = require("../../middlewares/autorizacion");
 const validarCamposRequeridos = require("../../middlewares/validacion");
 const cargarEvidencia = require("../../middlewares/cargaArchivos");
+const ROLES = require("../../utils/roles");
 
-const rutasEvidencias = express.Router();
+const evidenciasRouter = express.Router();
 
-rutasEvidencias.use(autenticarUsuario);
+evidenciasRouter.use(autenticarUsuario);
 
-rutasEvidencias.get("/", envolverAsync(evidenciasControlador.listarEvidencias));
+evidenciasRouter.get("/", envolverAsync(evidenciasController.listarEvidencias));
 
-rutasEvidencias.get("/:id", envolverAsync(evidenciasControlador.obtenerEvidencia));
+evidenciasRouter.get("/:id", envolverAsync(evidenciasController.obtenerEvidencia));
 
-rutasEvidencias.post(
+// Descarga del archivo fisico. El service valida que el estudiante
+// solo pueda abrir sus propias evidencias.
+evidenciasRouter.get("/:id/file", envolverAsync(evidenciasController.descargarEvidencia));
+
+evidenciasRouter.post(
   "/",
   cargarEvidencia,
   validarCamposRequeridos(["idProyecto"]),
-  envolverAsync(evidenciasControlador.crearEvidencia)
+  envolverAsync(evidenciasController.crearEvidencia)
 );
 
-module.exports = rutasEvidencias;
+evidenciasRouter.delete(
+  "/:id",
+  autorizarRoles(ROLES.ADMINISTRADOR),
+  envolverAsync(evidenciasController.eliminarEvidencia)
+);
+
+module.exports = evidenciasRouter;

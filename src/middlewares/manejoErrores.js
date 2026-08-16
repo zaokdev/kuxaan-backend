@@ -1,4 +1,4 @@
-// Middlewares finales: ruta no encontrada y manejo central de errores.
+﻿// Middlewares finales: ruta no encontrada y manejo central de errores.
 const { enviarError } = require("../utils/respuestas");
 
 function rutaNoEncontrada(peticion, respuesta) {

@@ -1,7 +1,8 @@
-// Logica de negocio del registro de horas de servicio social.
-const horasRepositorio = require("./horas.repository");
-const estudiantesServicio = require("../estudiantes/estudiantes.service");
-const proyectosServicio = require("../proyectos/proyectos.service");
+﻿// Logica de negocio del registro de horas de servicio social.
+const horasRepository = require("./horas.repository");
+const estudiantesService = require("../estudiantes/estudiantes.service");
+const proyectosService = require("../proyectos/proyectos.service");
+const asignacionesService = require("../asignaciones/asignaciones.service");
 const convertirAFecha = require("../../utils/fechas");
 const ErrorAplicacion = require("../../utils/errores");
 const ROLES = require("../../utils/roles");
@@ -10,12 +11,15 @@ const ROLES = require("../../utils/roles");
 async function obtenerRegistros(usuarioAutenticado) {
   const filtroAlumno =
     usuarioAutenticado.rol === ROLES.ESTUDIANTE ? usuarioAutenticado.idAlumno : undefined;
-  return horasRepositorio.listarRegistros(filtroAlumno);
+  return horasRepository.listarRegistros(filtroAlumno);
 }
 
 async function registrarHoras(idAlumno, datosEntrada) {
-  await estudiantesServicio.obtenerEstudiantePorId(idAlumno);
-  await proyectosServicio.obtenerProyectoPorId(datosEntrada.idProyecto);
+  await estudiantesService.obtenerEstudiantePorId(idAlumno);
+  await proyectosService.obtenerProyectoPorId(datosEntrada.idProyecto);
+
+  // Solo se pueden registrar horas en proyectos donde el alumno participa.
+  await asignacionesService.asegurarAsignacion(idAlumno, datosEntrada.idProyecto);
 
   const cantidadHoras = Number(datosEntrada.cantidadHoras);
 
@@ -31,11 +35,11 @@ async function registrarHoras(idAlumno, datosEntrada) {
     fechaRegistro: convertirAFecha(datosEntrada.fechaRegistro, "fechaRegistro") || new Date(),
   };
 
-  return horasRepositorio.crearRegistro(datosRegistro);
+  return horasRepository.crearRegistro(datosRegistro);
 }
 
 async function actualizarRegistro(idRegistro, datosEntrada) {
-  const registroEncontrado = await horasRepositorio.buscarRegistroPorId(idRegistro);
+  const registroEncontrado = await horasRepository.buscarRegistroPorId(idRegistro);
 
   if (!registroEncontrado) {
     throw new ErrorAplicacion("Registro de horas no encontrado", 404);
@@ -59,7 +63,17 @@ async function actualizarRegistro(idRegistro, datosEntrada) {
     datosRegistro.fechaRegistro = convertirAFecha(datosEntrada.fechaRegistro, "fechaRegistro");
   }
 
-  return horasRepositorio.actualizarRegistro(idRegistro, datosRegistro);
+  return horasRepository.actualizarRegistro(idRegistro, datosRegistro);
 }
 
-module.exports = { obtenerRegistros, registrarHoras, actualizarRegistro };
+async function eliminarRegistro(idRegistro) {
+  const registroEncontrado = await horasRepository.buscarRegistroPorId(idRegistro);
+
+  if (!registroEncontrado) {
+    throw new ErrorAplicacion("Registro de horas no encontrado", 404);
+  }
+
+  return horasRepository.eliminarRegistro(idRegistro);
+}
+
+module.exports = { obtenerRegistros, registrarHoras, actualizarRegistro, eliminarRegistro };
